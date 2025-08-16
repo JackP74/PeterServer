@@ -8,6 +8,8 @@ internal class Program
     {
         Console.Title = "Peter's Private Server";
 
+        UserManagement.LoadUsers();
+
         while (true)
         {
             Console.Clear();
@@ -17,9 +19,12 @@ internal class Program
 
             string password = Console.ReadLine() ?? "";
 
+
         }
         
 
 
     }
+
+
 }
