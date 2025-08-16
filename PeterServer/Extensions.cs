@@ -1,12 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PeterServer;
 
@@ -21,7 +15,7 @@ static internal class Extensions
     /// <param name="plainText">The text to encrypt.</param>
     /// <param name="publicKeyXml">The XML string of the RSA public key.</param>
     /// <returns>The encrypted data as a Base64 string.</returns>
-    public static string? Encrypt(string plainText, string? publicKeyXml = null)
+    internal static string? Encrypt(string plainText, string? publicKeyXml = null)
     {
         using RSA rsa = RSA.Create(2048);
 
@@ -45,7 +39,7 @@ static internal class Extensions
     /// <param name="encryptedText">The Base64 encrypted string.</param>
     /// <param name="privateKeyXml">The XML string of the RSA private key.</param>
     /// <returns>The decrypted plaintext string.</returns>
-    public static string? Decrypt(string encryptedText, string? privateKeyXml = null)
+    internal static string? Decrypt(string encryptedText, string? privateKeyXml = null)
     {
         using RSA rsa = RSA.Create(2048);
 
@@ -61,6 +55,24 @@ static internal class Extensions
             Console.WriteLine(e.ToString());
             return null;
         }
+    }
+
+    /// <summary>
+    /// Computes the SHA256 hash for a given string.
+    /// </summary>
+    /// <param name="input">The input string to hash.</param>
+    /// <returns>A 64-character lowercase hexadecimal string representing the SHA256 hash.</returns>
+    internal static string ComputeSha256Hash(string input)
+    {
+        byte[] bytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
+
+        StringBuilder builder = new();
+        for (int i = 0; i < bytes.Length; i++)
+        {
+            builder.Append(bytes[i].ToString("x2"));
+        }
+
+        return builder.ToString();
     }
 
     /// <summary>
@@ -83,7 +95,7 @@ static internal class Extensions
     /// This method gracefully handles exceptions by catching them and returning null,
     /// preventing crashes from malformed objects.
     /// </remarks>
-    public static string? Serialize<T>(T input)
+    internal static string? Serialize<T>(T input)
     {
         try
         {
@@ -108,7 +120,7 @@ static internal class Extensions
     /// This method gracefully handles exceptions by catching them and returning default(T),
     /// which prevents crashes from invalid or malformed JSON strings.
     /// </remarks>
-    public static T? Deserialize<T>(string input)
+    internal static T? Deserialize<T>(string input)
     {
         try
         {
@@ -120,7 +132,11 @@ static internal class Extensions
         }
     }
 
-    public static void WriteError(string error)
+    /// <summary>
+    /// Displays a message in the console with red text to indicate an error.
+    /// </summary>
+    /// <param name="error">The error message to write to the console.</param>
+    internal static void WriteError(string error)
     {
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine(error);
